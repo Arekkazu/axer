@@ -1,22 +1,13 @@
-# TODO --> Aun esta en prueba 
 [metadata]
 name = "NestJs Api"
-
 [[variables]]
-name = "author"
-prompt = "Project's author?"
-type = "string"
+field = "author"
+prompt = "Project's author?: "
 default = "arekkazu"
-
 [[variables]]
-name = "description"
-prompt = "Tiny description: "
-type = "string"
+field = "description"
+prompt = "Project Description: "
 default = "Building an API using NestJs"
 
-[[variables]]
-name = "description"
-prompt = "Tiny description: "
-type = "string"
-default = "Building an API using NestJs"
+
 

@@ -1,8 +1,68 @@
 use std::{fs, io};
-
 use std::fs::{ReadDir};
-use std::io::Read;
 use std::path::Path;
+use serde::Deserialize;
+
+#[derive(Debug)]
+pub enum TomlTemplateError {
+    Io(io::Error),
+    TomlError(toml::de::Error)
+}
+
+
+
+impl From<io::Error> for TomlTemplateError {
+    fn from(err: io::Error) -> Self {
+        TomlTemplateError::Io(err)
+    }
+}
+
+impl From<toml::de::Error> for TomlTemplateError {
+    fn from(err: toml::de::Error) -> Self {
+        TomlTemplateError::TomlError(err)
+    }
+}
+
+#[derive(Debug, Deserialize)]
+pub struct TomlTemplate {
+    metadata: Metadata,
+    variables: Vec<Variables>
+}
+
+#[derive(Debug, Deserialize)]
+struct Metadata {
+    name: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Variables {
+    field: String,
+    prompt: String,
+    default: String,
+}
+
+impl TomlTemplate {
+    pub fn metadata_name(&self) -> &String {
+        &self.metadata.name
+    }
+
+    pub fn variables(&self) -> &[Variables] {
+        &self.variables
+    }
+
+}
+
+impl Variables {
+    pub fn field(&self) -> &String {
+        &self.field
+    }
+    pub fn prompt(&self) -> &String {
+        &self.prompt
+    }
+    pub fn default(&self) -> &String {
+        &self.default
+    }
+}
 
 pub fn create_directory_templates() {
     let path = "templates";
@@ -42,13 +102,17 @@ pub fn check_template() -> io::Result<Vec<String>> {
     Ok(list_templates)
 }
 
-pub fn getting_toml_template(template_choiced: &str) -> Result<(), io::Error>  {
-    let file = format!("templates/{template_choiced}/template.toml");
-    println!("{}", file);
-    let path = Path::new(&file);
-    let mut file = fs::File::open(path)?;
-    let mut contet_toml = String::new();
-    file.read_to_string(&mut contet_toml)?;
-    print!("contet: {}", contet_toml);
-    Ok(())
+fn getting_toml_template(template_choiced: &str) -> Result<String, io::Error>  {
+    let content = fs::read_to_string(format!("templates/{template_choiced}/template.toml"))?;
+    Ok(content)
+}
+
+pub fn template_process(template_choiced: &str) -> Result<TomlTemplate, TomlTemplateError> {
+    let toml_template = getting_toml_template(template_choiced)?;
+    let parsing = parse_toml_template(toml_template)?;
+    Ok(parsing)
+}
+
+fn parse_toml_template(toml_content: String) -> Result<TomlTemplate, toml::de::Error>{
+    toml::from_str(&toml_content)
 }
