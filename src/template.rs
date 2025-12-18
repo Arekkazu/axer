@@ -32,6 +32,7 @@ pub struct TomlTemplate {
 #[derive(Debug, Deserialize)]
 struct Metadata {
     name: String,
+    language: String,
 }
 
 #[derive(Debug, Deserialize)]
@@ -44,6 +45,9 @@ pub struct Variables {
 impl TomlTemplate {
     pub fn metadata_name(&self) -> &String {
         &self.metadata.name
+    }
+    pub fn metadata_language(&self) -> &String {
+        &self.metadata.language
     }
 
     pub fn variables(&self) -> &[Variables] {
@@ -79,8 +83,7 @@ fn exist_dir(path: &str) -> io::Result<bool> {
 }
 
 pub fn check_template() -> io::Result<Vec<String>> {
-    let dir_template: &Path = Path::new("templates");
-    let templates_folder: ReadDir = fs::read_dir(dir_template)?;
+    let templates_folder: ReadDir = fs::read_dir("templates")?;
     let list_templates = templates_folder
         .filter_map(|template| {
             let dir_entry = template.ok()?;

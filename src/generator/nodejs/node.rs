@@ -1,6 +1,8 @@
-use crate::generator::node::io::ErrorKind;
+
 use std::io;
+use std::io::ErrorKind;
 use std::process::Command;
+
 
 pub enum PackageManager {
     Npm,
@@ -9,9 +11,17 @@ pub enum PackageManager {
     Bun
 }
 
-
-
 impl PackageManager {
+
+    pub fn package_managers_avaliable() -> Vec<&'static str>  {
+        vec![
+            PackageManager::Npm.as_str(),
+            PackageManager::Pnpm.as_str(),
+            PackageManager::Bun.as_str(),
+            PackageManager::Yarn.as_str()
+
+        ]
+    }
 
     pub fn from_str(s: &str) -> Option<Self> {
         match s {
