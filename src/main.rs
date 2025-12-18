@@ -3,7 +3,7 @@ mod template;
 mod generator;
 mod replacer;
 mod ui;
-use crate::template::create_directory_templates;
+use crate::template::{create_directory_templates, TomlTemplate, TomlTemplateError};
 use crate::ui::tui;
 /*
 ESTE PROYECTO SERA UN CLI LLAMADO AXER ES PARA CREAR CAREPTA O BUENO PROYECTOS A PARTIR DE
@@ -12,7 +12,6 @@ SE LEERA APARTIR DE UN TOML, QUE INTEGRARA LAS DISTINTAS COSAS PARA QUE ESTE ALL
  */
 
 fn main() {
-    template::getting_toml_template("nest-api").unwrap();
     create_directory_templates();
     tui()
 }
