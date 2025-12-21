@@ -1,6 +1,5 @@
 use std::{fs, io};
 use std::fs::{ReadDir};
-use std::path::Path;
 use serde::Deserialize;
 
 #[derive(Debug)]
@@ -8,8 +7,6 @@ pub enum TomlTemplateError {
     Io(io::Error),
     TomlError(toml::de::Error)
 }
-
-
 
 impl From<io::Error> for TomlTemplateError {
     fn from(err: io::Error) -> Self {
