@@ -1,6 +1,7 @@
 use std::{fs, io};
 use std::fs::{ReadDir};
-use std::path::Path;
+use std::path::PathBuf;
+use directories::ProjectDirs;
 use serde::Deserialize;
 
 #[derive(Debug)]
@@ -8,8 +9,6 @@ pub enum TomlTemplateError {
     Io(io::Error),
     TomlError(toml::de::Error)
 }
-
-
 
 impl From<io::Error> for TomlTemplateError {
     fn from(err: io::Error) -> Self {
@@ -32,6 +31,7 @@ pub struct TomlTemplate {
 #[derive(Debug, Deserialize)]
 struct Metadata {
     name: String,
+    language: String,
 }
 
 #[derive(Debug, Deserialize)]
@@ -44,6 +44,9 @@ pub struct Variables {
 impl TomlTemplate {
     pub fn metadata_name(&self) -> &String {
         &self.metadata.name
+    }
+    pub fn metadata_language(&self) -> &String {
+        &self.metadata.language
     }
 
     pub fn variables(&self) -> &[Variables] {
@@ -64,23 +67,26 @@ impl Variables {
     }
 }
 
-pub fn create_directory_templates() {
-    let path = "templates";
-    let exist_dir = exist_dir(path).expect("The directory doesnt exist");
+pub fn config_dir () -> PathBuf {
+    let dir = ProjectDirs::from("top","Arekkazu", "axer-cli").expect("An error ocurred on writing config files");
+    dir.config_dir().join("templates")
+}
 
+pub fn create_directory_templates() {
+    let exist_dir = exist_dir(&config_dir()).expect("The directory doesnt exist");
+    println!("{:?}", config_dir());
     if !exist_dir {
-        fs::create_dir(path).expect("And error ocurred Creating the file");
+        fs::create_dir_all(config_dir()).expect("And error ocurred Creating the file");
     }
 }
 
-fn exist_dir(path: &str) -> io::Result<bool> {
+fn exist_dir(path: &PathBuf) -> io::Result<bool> {
     let exist = fs::exists(path)?;
     Ok(exist)
 }
 
 pub fn check_template() -> io::Result<Vec<String>> {
-    let dir_template: &Path = Path::new("templates");
-    let templates_folder: ReadDir = fs::read_dir(dir_template)?;
+    let templates_folder: ReadDir = fs::read_dir(config_dir())?;
     let list_templates = templates_folder
         .filter_map(|template| {
             let dir_entry = template.ok()?;
