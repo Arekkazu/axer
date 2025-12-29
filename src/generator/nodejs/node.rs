@@ -2,7 +2,7 @@
 use std::io;
 use std::io::ErrorKind;
 use std::process::Command;
-
+use crate::generator::ErrorGenerator;
 
 pub enum PackageManager {
     Npm,
@@ -42,21 +42,21 @@ impl PackageManager {
         }
     }
 
-    pub fn install_packages(&self)  -> Result<(), io::Error >{
+    pub fn install_packages(&self, template: &str)  -> Result<(), ErrorGenerator >{
         let package_manager = self.as_str();
-        let command = Command::new(&package_manager).arg("install").status()?;
+        let command = Command::new(&package_manager).arg("install").current_dir(template).status()?;
 
         if command.success() {
             Ok(())
         }  else {
-            Err(io::Error::new(
-                ErrorKind::Other,
+            Err(ErrorGenerator::Io(io::Error::new(
+                ErrorKind::NotFound,
                 format!(
                     "{} install failed with code {:?}",
                     &package_manager,
                     command.code().unwrap_or(-1)
                 ),
-            ))
+            )))
         }
     }
 
