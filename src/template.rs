@@ -74,7 +74,7 @@ pub fn config_dir () -> PathBuf {
 
 pub fn create_directory_templates() {
     let exist_dir = exist_dir(&config_dir()).expect("The directory doesnt exist");
-    println!("{:?}", config_dir());
+
     if !exist_dir {
         fs::create_dir_all(config_dir()).expect("And error ocurred Creating the file");
     }
@@ -109,7 +109,8 @@ pub fn check_template() -> io::Result<Vec<String>> {
 }
 
 fn getting_toml_template(template_choiced: &str) -> Result<String, io::Error>  {
-    let content = fs::read_to_string(format!("templates/{template_choiced}/template.toml"))?;
+    
+    let content = fs::read_to_string(config_dir().join(template_choiced).join("template.toml"))?;
     Ok(content)
 }
 

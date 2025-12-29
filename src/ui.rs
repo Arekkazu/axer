@@ -6,15 +6,16 @@ use std::fmt::format;
 use crate::template::{TomlTemplate, TomlTemplateError, check_template, template_process};
 use colored::Colorize;
 use inquire::{InquireError, Select, prompt_text, Text};
-use crate::generator::{prompt_from_language, generator, PromptType};
+use crate::generator::{prompt_from_language, generator, PromptType, ErrorGenerator};
 
 #[derive(Debug)]
 pub enum AppError {
-    Io(io::Error),
+    Io(Error),
     Inquire(InquireError),
     TemplateError(TomlTemplateError),
     NoTemplates,
     ErrorLanguage(String),
+    ErrorGenerator(ErrorGenerator)
 }
 
 impl From<String> for AppError {
@@ -41,10 +42,14 @@ impl AppError {
             AppError::ErrorLanguage(e) => {
                 eprintln!("Language error; {:?}", e)
             }
+            AppError::ErrorGenerator(e) => {
+                eprintln!("Error: {:?}",e)
+            }
+
         }
     }
 }
-impl From<io::Error> for AppError {
+impl From<Error> for AppError {
     fn from(value: Error) -> Self {
         AppError::Io(value)
     }
@@ -55,7 +60,11 @@ impl From<InquireError> for AppError {
         AppError::Inquire(value)
     }
 }
-
+impl From<ErrorGenerator> for AppError {
+    fn from(value: ErrorGenerator) -> Self {
+        AppError::ErrorGenerator(value)
+    }
+}
 impl From<TomlTemplateError> for AppError {
     fn from(value: TomlTemplateError) -> Self {
         AppError::TemplateError(value)
@@ -120,7 +129,7 @@ fn asking_option_from_template(template: &str) -> Result<HashMap<String, String>
 
 pub fn prompts_languages(language: &str) -> Result<HashMap<String,String>,AppError> {
     let prompts = prompt_from_language(language)?;
-    println!("{:?}", prompts);
+   
     let mut choices: HashMap<String,String> = HashMap::new();
 
     for prompt in prompts {
