@@ -1,5 +1,7 @@
 use std::{fs, io};
 use std::fs::{ReadDir};
+use std::path::PathBuf;
+use directories::ProjectDirs;
 use serde::Deserialize;
 
 #[derive(Debug)]
@@ -65,22 +67,26 @@ impl Variables {
     }
 }
 
+pub fn config_dir () -> PathBuf {
+    let dir = ProjectDirs::from("top","Arekkazu", "axer-cli").expect("An error ocurred on writing config files");
+    dir.config_dir().join("templates")
+}
+
 pub fn create_directory_templates() {
-    let path = "templates";
-    let exist_dir = exist_dir(path).expect("The directory doesnt exist");
+    let exist_dir = exist_dir(&config_dir()).expect("The directory doesnt exist");
 
     if !exist_dir {
-        fs::create_dir(path).expect("And error ocurred Creating the file");
+        fs::create_dir_all(config_dir()).expect("And error ocurred Creating the file");
     }
 }
 
-fn exist_dir(path: &str) -> io::Result<bool> {
+fn exist_dir(path: &PathBuf) -> io::Result<bool> {
     let exist = fs::exists(path)?;
     Ok(exist)
 }
 
 pub fn check_template() -> io::Result<Vec<String>> {
-    let templates_folder: ReadDir = fs::read_dir("templates")?;
+    let templates_folder: ReadDir = fs::read_dir(config_dir())?;
     let list_templates = templates_folder
         .filter_map(|template| {
             let dir_entry = template.ok()?;
@@ -103,7 +109,8 @@ pub fn check_template() -> io::Result<Vec<String>> {
 }
 
 fn getting_toml_template(template_choiced: &str) -> Result<String, io::Error>  {
-    let content = fs::read_to_string(format!("templates/{template_choiced}/template.toml"))?;
+    
+    let content = fs::read_to_string(config_dir().join(template_choiced).join("template.toml"))?;
     Ok(content)
 }
 

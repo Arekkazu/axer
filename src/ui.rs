@@ -1,20 +1,19 @@
 use std::collections::HashMap;
-use std::io;
+use std::{env, fs, io};
 use std::io::Error;
-use std::env;
-use std::fmt::format;
 use crate::template::{TomlTemplate, TomlTemplateError, check_template, template_process};
 use colored::Colorize;
-use inquire::{InquireError, Select, prompt_text, Text};
-use crate::generator::{prompt_from_language, generator, PromptType};
+use inquire::{InquireError, Select, prompt_text};
+use crate::generator::{prompt_from_language, generator, PromptType, ErrorGenerator};
 
 #[derive(Debug)]
 pub enum AppError {
-    Io(io::Error),
+    Io(Error),
     Inquire(InquireError),
     TemplateError(TomlTemplateError),
     NoTemplates,
     ErrorLanguage(String),
+    ErrorGenerator(ErrorGenerator)
 }
 
 impl From<String> for AppError {
@@ -41,10 +40,17 @@ impl AppError {
             AppError::ErrorLanguage(e) => {
                 eprintln!("Language error; {:?}", e)
             }
+            AppError::ErrorGenerator(e) => {
+                eprintln!("Error: {:?}",e)
+            }
+
         }
     }
 }
-impl From<io::Error> for AppError {
+
+
+
+impl From<Error> for AppError {
     fn from(value: Error) -> Self {
         AppError::Io(value)
     }
@@ -55,7 +61,11 @@ impl From<InquireError> for AppError {
         AppError::Inquire(value)
     }
 }
-
+impl From<ErrorGenerator> for AppError {
+    fn from(value: ErrorGenerator) -> Self {
+        AppError::ErrorGenerator(value)
+    }
+}
 impl From<TomlTemplateError> for AppError {
     fn from(value: TomlTemplateError) -> Self {
         AppError::TemplateError(value)
@@ -65,7 +75,9 @@ impl From<TomlTemplateError> for AppError {
 pub fn tui() {
     match tui_inner() {
         Ok(_) => {}
-        Err(e) => e.print(),
+        Err(e) => {
+            e.print()
+        }
     }
 }
 pub fn tui_inner() -> Result<String, AppError> {
@@ -82,7 +94,13 @@ pub fn tui_inner() -> Result<String, AppError> {
     let language_template = language_template(&template)?;
     let template_prompts = asking_option_from_template(&template).expect("Error test");
     let language_setup = prompts_languages(&language_template)?;
-    generator(&language_template, language_setup,&template)?;
+    match generator(&language_template, language_setup,&template, template_prompts) {
+        Ok(_) => {},
+        Err(e) => {
+            let locate_folder = env::current_dir()?;
+            fs::remove_dir(locate_folder.join(&template))?;
+        }
+    }
     //MANDANDO FUNCION A GENERATOR DICIENDO QUE VA ESCOGER ESE TEMPLATE
     Ok(template)
 }
@@ -120,7 +138,7 @@ fn asking_option_from_template(template: &str) -> Result<HashMap<String, String>
 
 pub fn prompts_languages(language: &str) -> Result<HashMap<String,String>,AppError> {
     let prompts = prompt_from_language(language)?;
-    println!("{:?}", prompts);
+   
     let mut choices: HashMap<String,String> = HashMap::new();
 
     for prompt in prompts {
