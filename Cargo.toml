@@ -2,6 +2,21 @@
 name = "axer"
 version = "0.1.0"
 edition = "2024"
+authors = ["Arekkazu"]
+license = "MIT"
+description = "Fast and flexible project generator from templates with interactive TUI"
+repository = "https://github.com/Arekkazu/axer"
+homepage = "https://github.com/Arekkazu/axer"
+documentation = "https://github.com/Arekkazu/axer"
+readme = "README.md"
+keywords = ["cli", "template", "generator", "scaffold", "tui"]
+categories = ["command-line-utilities", "development-tools"]
+exclude = [
+    ".idea/",
+    "target/",
+    "templates/",
+    "READE_IEE.md",
+]
 
 [dependencies]
 inquire = "0.9.1"
@@ -13,4 +28,3 @@ directories = "6.0.0"
 serde = { version = "1.0.228", features = ["derive"] }
 handlebars = "6.3.2"
 toml = "0.9.8"
-

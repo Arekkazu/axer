@@ -1,0 +1,19 @@
+{
+  "name": "{{project-name}}",
+  "version": "1.0.0",
+  "description": "{{description}}",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "keywords": [],
+  "author": "{{author}}",
+  "license": "ISC",
+  "devDependencies": {
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}

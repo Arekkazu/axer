@@ -67,8 +67,8 @@ impl Variables {
     }
 }
 
-pub fn config_dir () -> PathBuf {
-    let dir = ProjectDirs::from("top","Arekkazu", "axer-cli").expect("An error ocurred on writing config files");
+pub fn config_dir() -> PathBuf {
+    let dir = ProjectDirs::from("top", "Arekkazu", "axer-cli").expect("An error ocurred on writing config files");
     dir.config_dir().join("templates")
 }
 

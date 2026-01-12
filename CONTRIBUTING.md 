@@ -1,0 +1,15 @@
+## Contributing
+
+Thanks for your interest in contributing to axer-cli.
+
+Before submitting a pull request, please keep in mind:
+
+- Keep PRs small and focused
+- Discuss architectural or breaking changes before implementing them
+- Code style and behavior should match the existing project direction
+
+The maintainer may request changes or reject contributions that do not
+align with the project's goals.
+
+By submitting a pull request, you agree that your contribution will be
+licensed under the MIT License.

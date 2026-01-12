@@ -19,6 +19,7 @@ impl From<TemplateError> for ReplacerError {
 impl From<RenderError> for ReplacerError {
     fn from(v: RenderError) -> Self { Self::RenderError(v) }
 }
+ 
 pub fn replacer_project_file(template_answers: HashMap<String,String>, file: PathBuf) -> Result< (), ReplacerError >{
 
     let file_project: String = read_to_string(&file)?;

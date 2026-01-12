@@ -1,0 +1,15 @@
+[metadata]
+name = "NestJs Api"
+language = "nodejs"
+[[variables]]
+field = "author"
+prompt = "Project's author?: "
+default = "arekkazu"
+[[variables]]
+field = "project-name"
+prompt = "Project's project name?: "
+default = "nest-api"
+[[variables]]
+field = "description"
+prompt = "Project Description: "
+default = "Building an API using NestJs"
