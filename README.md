@@ -1,5 +1,5 @@
 # Axer
-
+🇺🇸 [English](README.md) | 🇨🇴 [Español](docs/README_ES.md)
 ```
      >>==================================================<<
      ||                                                  ||
@@ -280,7 +280,4 @@ MIT License - Copyright (c) 2026 Arekkazu
 [![Documentation](https://docs.rs/axer/badge.svg)](https://docs.rs/axer)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Rust](https://img.shields.io/badge/Rust-1.70%2B-orange.svg)](https://www.rust-lang.org/)
-
-[English](README.md) | [Español](docs/README_ES.md)
-
 </div>
